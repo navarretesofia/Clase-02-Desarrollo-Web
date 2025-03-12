@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Práctica (para la clase)</title>
+        <style>
+            *{ margin:0; padding:0; }
+            body{ text-align: center; font-family: Helvetica, Arial, sans-serif; }
+            h1 { padding:1vh 15vw; }
+            h2, p{ padding:.5vh 0; }
+            header, article, footer{ padding:5vh 0; }
+            header, article{ border-bottom:1px dotted black; }
+            div{ padding:2vh 6vw; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Tufte refers to data-ink as the non-erasable ink used for the presentation of data</h1>
+        </header>
+        <main>
+            <article>
+                <h2>Fluctuación del valor del dolar en pesos chilenos durante 2024</h2>
+                <p>Con una <a href="https://datavizcatalogue.com/ES/metodos/grafica_de_linea.html" target="_blank">gráfica de línea</a></p>
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 570 210">
+                        <g transform="translate(0,195) scale(1,-1)" id="lineas"><!--aquí dentro va la polyline--></g>
+                        <g id="years"><!--aquí dentro van los textos con los años--></g>
+                    </svg>
+                </div>
+            </article>
+            <article>
+                <h2>Cantidas de mujeres chilenas mayores de 65 años en Chile el año 2024 según regiones </h2>
+                <p>Con una <a href="https://datavizcatalogue.com/ES/metodos/graficos_de_barras.html" target="_blank">gráfica de barras</a></p>
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100" id="barras"><!--aquí dentro van los grupos con rectangulo y textos--></svg>
+                </div> 
+            </article>
+        </main>
+        <footer>
+            <p><small>Revisar lo de Data-Ink Ratio en <a href="https://infovis-wiki.net/wiki/Data-Ink_Ratio" target="_blank">infovis</a></small></p>
+        </footer>
+        <script>
+            //PRIMERA GRÁFICA
+
+            // Datos de https://si3.bcentral.cl/Bdemovil/BDE/Series/MOV_SC_TC1
+
+            const lineal = {
+                censos: ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"],
+                censados: [877, 932, 969, 981, 954, 916, 944, 943, 913, 897, 961, 977],
+            };
+
+            const graficaLineas = document.querySelector("#lineas");
+
+            let coordenadas = "";
+
+            let momentos = ""
+
+            // la manera de despliegue de las coordenadas del Eje Y nos exige un ajuste, que copiamos de https://stackoverflow.com/questions/39560206/change-0-0-from-svg
+
+            // AQUÍ LO QUE HIZO FUE CREAR ESAS DOS CAJAS PERO DEJARLAS VACÍAS PARA QUE ASÍ DESPUÉS LAS PUEDA LLENAR
+
+            lineal.censados.forEach((d, i) => {
+                coordenadas += ((i*50)+7) + "," + Math.round(d/12) + " ";
+                momentos += `<text x="${i*50}" y="205" font-weight="1000" font-size="6">${lineal.censos[i]}</text> `;
+
+            })
+
+            console.log(coordenadas);
+
+            console.log(momentos);
+
+            graficaLineas.innerHTML += `<polyline points="${coordenadas}" fill="none" stroke="pink" stroke-width="2"/>`;
+
+            document.querySelector("#years").innerHTML += momentos;
+
+
+            // SEGUNDA GRÁFICA 
+
+            // Datos de https://si3.bcentral.cl/Siete/ES/Siete/Cuadro/CAP_ESTADIST_GENERO/MN_GENERO1/EST_GEN_POB_02/637896816260295860
+
+            const barras = [
+                    {region:"Tarapacá", numero:20.642},
+                    {region:"Coquimbo", numero:70.994},
+                    {region:"Maule", numero:100.508},
+                    {region:"Ñuble", numero:49.366 },
+                    {region:"La Araucanía", numero:88.237},
+                    {region:"Los Ríos", numero:35.706},
+                    {region:"Los Lagos", numero:69.791}
+                ]
+
+            const graficaBarras = document.querySelector("#barras");
+
+            barras.forEach((d, i) => {
+                graficaBarras.innerHTML += `<g transform="translate(0,${i*15})">
+                    <rect x="0" y="0" fill="pink" width="${d.numero*3}" height="10" />
+                    <text x="3" y="7" fill="white" font-weight="bolder" font-size="5">${d.region}</text>
+                    <text x="${(d.numero*3)+3}" y="7" font-size="6">${new Intl.NumberFormat("es-ES").format(d.numero)} mujeres</text>
+                </g>`
+            });
+        </script>
+    </body>
+</html>
